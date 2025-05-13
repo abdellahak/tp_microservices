@@ -95,6 +95,29 @@ export const deleteStudent = (req , res ) => {
 };
 
 
+export const incrementAbsence = (req, res) => {
+  const id = req.params.id;
+  Student.findByPk(id)
+    .then((student) => {
+      if (student) {
+        student.total_absences += 1;
+        return student.save();
+      } else {
+        res.status(404).send("L'étudiant demandé est introuvable");
+        return null;
+      }
+    })
+    .then((student) => {
+      res.json(student);
+    })
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(500)
+        .send("Une erreur est survenue lors de la mise à jour de L'étudiant");
+    });
+};
+
 
 
 

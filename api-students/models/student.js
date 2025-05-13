@@ -24,7 +24,7 @@ const Student = sequelize.define('Student', {
       allowNull: false,
     },
     total_absences: {
-      type : Sequelize.STRING,
+      type : Sequelize.INTEGER,
       defaultValue: 0,
     },
 });

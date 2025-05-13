@@ -1,6 +1,6 @@
 import Absence from "../models/absence.js";
 
-export const createAbsence = (req, res) => {
+export const createAbsence = async (req, res) => {
   const { studentId, comment, date, status } = req.body;
   const absence = new Absence({
     studentId,
@@ -9,19 +9,27 @@ export const createAbsence = (req, res) => {
     comment,
   });
 
-  absence
-    .save()
-    .then(abs => {
-      res.status(201).json({
-        message: "Absence created successfully!"
-      });
-    }
-    )
-    .catch((error) =>
-      res
-        .status(500)
-        .json({ message: "Error : can not add this absence " + error.message })
+  try {
+    await absence.save();
+
+    await fetch(
+      `http://api_students:9000/students/${studentId}/increment-absence`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
+
+    res.status(201).json({
+      message: "Absence created successfully!",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error : can not add this absence " + error.message });
+  }
 };
 
 export const getAbsences = (req, res) => {
@@ -71,11 +79,9 @@ export const updateAbsence = (req, res) => {
       res.status(200).json({ message: "Absence updated successfully!" });
     })
     .catch((error) =>
-      res
-        .status(500)
-        .json({
-          message: "Error : can not update this absence " + error.message,
-        })
+      res.status(500).json({
+        message: "Error : can not update this absence " + error.message,
+      })
     );
 };
 
@@ -90,11 +96,9 @@ export const deleteAbsence = (req, res) => {
       res.status(200).json({ message: "Absence deleted successfully!" });
     })
     .catch((error) =>
-      res
-        .status(500)
-        .json({
-          message: "Error : can not delete this absence " + error.message,
-        })
+      res.status(500).json({
+        message: "Error : can not delete this absence " + error.message,
+      })
     );
 };
 
@@ -109,10 +113,9 @@ export const getAbsencesByStudentId = (req, res) => {
       res.status(200).json(absences);
     })
     .catch((error) =>
-      res
-        .status(500)
-        .json({
-          message: "Error : can not get absences for this student " + error.message,
-        })
+      res.status(500).json({
+        message:
+          "Error : can not get absences for this student " + error.message,
+      })
     );
-}
+};

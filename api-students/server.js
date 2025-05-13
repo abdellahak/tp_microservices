@@ -5,6 +5,7 @@ import {
   deleteStudent,
   getAllStudents,
   getStudentById,
+  incrementAbsence,
   updateStudent,
 } from "./controllers/studentController.js";
 
@@ -17,6 +18,8 @@ app.get("/students/:id", getStudentById);
 app.post("/students", addNewStudent);
 app.put("/students/:id", updateStudent);
 app.delete("/students/:id", deleteStudent);
+app.put("/students/:id/increment-absence", incrementAbsence);
+
 sequelize
   .sync()
   .then(() => {
