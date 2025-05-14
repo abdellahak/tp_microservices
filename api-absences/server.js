@@ -8,6 +8,7 @@ import {
   getAbsencesByStudentId,
   updateAbsence,
 } from "./controllers/absenceController.js";
+import { consumeCreateAbsenceQueue } from "./events/consumer.js";
 
 const app = express();
 const port = 7000;
@@ -34,6 +35,7 @@ mongoose
     console.log("MongoDB connected");
     app.listen(port, () => {
       console.log(`API achats lancé sur http://localhost:${port}`);
+      consumeCreateAbsenceQueue();
     });
   })
   .catch((err) => {

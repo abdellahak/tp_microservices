@@ -1,4 +1,13 @@
 services:
+  apirabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - my_network
+
   api-students:
     build: ./api-students
     container_name: api_students

@@ -1,26 +1,21 @@
+import { publishToQueue } from "../events/producer.js";
 import Absence from "../models/absence.js";
 
 export const createAbsence = async (req, res) => {
-  const { studentId, comment, date, status } = req.body;
-  const absence = new Absence({
-    studentId,
-    date,
-    status,
-    comment,
-  });
-
   try {
+    const { studentId, comment, date, status } = req.body;
+    const absence = new Absence({
+      studentId,
+      date,
+      status,
+      comment,
+    });
     await absence.save();
 
-    await fetch(
-      `http://api_students:9000/students/${studentId}/increment-absence`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    await publishToQueue("absenceCreated", {
+      studentId,
+      absenceId: absence._id,
+    });
 
     res.status(201).json({
       message: "Absence created successfully!",
